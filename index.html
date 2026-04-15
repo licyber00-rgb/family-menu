@@ -29,22 +29,88 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* 日期天气栏 */
+        .date-box {
+            background: #fff;
+            border-radius: 16px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .date-info {
+            line-height: 1.4;
+        }
+        .date {
+            font-size: 16px;
+            color: #333;
+            font-weight: 500;
+        }
+        .week {
+            font-size: 14px;
+            color: #ff4477;
+            margin-top: 2px;
+        }
+        .weather {
+            font-size: 14px;
+            color: #666;
+            background: #f8f9fa;
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+
+        /* 餐段选择 */
+        .meal-box {
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .meal-title {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+        .meal-options {
+            display: flex;
+            gap: 10px;
+        }
+        .meal-item {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .meal-item.active {
+            background: #ff4477;
+            color: #fff;
+            border-color: #ff4477;
+        }
+        .meal-item input {
+            display: none;
+        }
+
         .header-card {
             background: #fff;
             border-radius: 20px;
-            padding: 30px 24px;
+            padding: 24px;
             text-align: center;
             margin-bottom: 20px;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
         }
-
         .title {
-            font-size: 28px;
+            font-size: 26px;
             color: #ff4477;
             font-weight: bold;
             margin-bottom: 8px;
         }
-
         .subtitle {
             color: #888;
             font-size: 15px;
@@ -57,7 +123,6 @@
             margin-bottom: 20px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
-
         .name-input {
             width: 100%;
             padding: 14px 18px;
@@ -67,7 +132,6 @@
             outline: none;
             transition: 0.3s;
         }
-
         .name-input:focus {
             border-color: #ff4477;
             box-shadow: 0 0 0 3px rgba(255, 68, 119, 0.1);
@@ -80,7 +144,6 @@
             margin-bottom: 20px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
-
         .group-title {
             font-size: 18px;
             color: #ff5722;
@@ -88,7 +151,6 @@
             padding-left: 8px;
             border-left: 4px solid #ff5722;
         }
-
         .dish-item {
             display: flex;
             align-items: center;
@@ -97,18 +159,15 @@
             transition: 0.2s;
             margin-bottom: 6px;
         }
-
         .dish-item:hover {
             background: #fff5f7;
         }
-
         .dish-item input {
             width: 22px;
             height: 22px;
             margin-right: 14px;
             accent-color: #ff4477;
         }
-
         .dish-name {
             font-size: 16px;
             color: #333;
@@ -129,7 +188,6 @@
             cursor: pointer;
             transition: 0.3s;
         }
-
         .submit-btn:active {
             transform: scale(0.97);
         }
@@ -143,7 +201,6 @@
             display: none;
             animation: pop 0.4s ease;
         }
-
         @keyframes pop {
             0% { transform: scale(0.9); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
@@ -161,11 +218,40 @@
 <body>
 
 <div class="container">
+    <!-- 日期+星期+天气 -->
+    <div class="date-box">
+        <div class="date-info">
+            <div class="date" id="todayDate"></div>
+            <div class="week" id="todayWeek"></div>
+        </div>
+        <div class="weather" id="weather">☀️ 晴朗</div>
+    </div>
+
     <div class="header-card">
         <h1 class="title">👨‍🍳 家庭智能点餐</h1>
         <p class="subtitle">勾选想吃的菜 · 一键提交 · 大厨秒收到</p>
     </div>
 
+    <!-- 餐段选择：早中晚 -->
+    <div class="meal-box">
+        <div class="meal-title">🍽️ 选择餐段</div>
+        <div class="meal-options">
+            <label class="meal-item" onclick="selectMeal(this)">
+                <input type="radio" name="meal" value="早餐" checked>
+                🌅 早餐
+            </label>
+            <label class="meal-item" onclick="selectMeal(this)">
+                <input type="radio" name="meal" value="午餐">
+                ☀️ 午餐
+            </label>
+            <label class="meal-item" onclick="selectMeal(this)">
+                <input type="radio" name="meal" value="晚餐">
+                🌙 晚餐
+            </label>
+        </div>
+    </div>
+
+    <!-- 姓名输入 -->
     <div class="input-box">
         <input type="text" class="name-input" id="userName" placeholder="👤 请输入你的称呼（如：爸爸/宝宝）">
     </div>
@@ -183,10 +269,8 @@
 </div>
 
 <script>
-    // ====================== 【你只需要改这里！】今日食材 ======================
+    // ====================== 基础配置 ======================
     const todayIngredients = ["猪肉", "土豆", "青椒", "娃娃菜", "鸡蛋", "杏鲍菇", "豆芽", "粉条"];
-
-    // ====================== 【TG 通知配置】填写你的机器人信息 ======================
     const TG_BOT_TOKEN = "8790494476:AAHFGW_XK682pA_RIAlTadyPZE1CtRE_zH4";
     const TG_CHAT_ID = "5807210055";
 
@@ -209,8 +293,31 @@
         { name: "酸辣豆芽", need: ["豆芽"], type: "veggie" }
     ];
 
-    // 分类渲染菜单
+    // ====================== 自动加载日期&星期 ======================
     window.onload = function () {
+        // 日期
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth() + 1;
+        const day = now.getDate();
+        document.getElementById("todayDate").innerText = `${year}年${month}月${day}日`;
+
+        // 星期
+        const weekArr = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+        document.getElementById("todayWeek").innerText = weekArr[now.getDay()];
+
+        // 渲染菜品
+        renderDishes();
+    };
+
+    // 餐段选择样式
+    function selectMeal(el) {
+        document.querySelectorAll(".meal-item").forEach(item => item.classList.remove("active"));
+        el.classList.add("active");
+    }
+
+    // 渲染菜品
+    function renderDishes() {
         const container = document.getElementById("dishContainer");
         let meat = "", egg = "", veggie = "", stew = "";
 
@@ -231,32 +338,36 @@
         });
 
         container.innerHTML = `
-            <div class="menu-group">
-                <div class="group-title">🥩 荤菜系列</div>${meat}
-            </div>
-            <div class="menu-group">
-                <div class="group-title">🥚 鸡蛋素菜</div>${egg}
-            </div>
-            <div class="menu-group">
-                <div class="group-title">🥬 清爽时蔬</div>${veggie}
-            </div>
-            <div class="menu-group">
-                <div class="group-title">🍲 炖菜烩菜</div>${stew}
-            </div>
+            <div class="menu-group"><div class="group-title">🥩 荤菜系列</div>${meat}</div>
+            <div class="menu-group"><div class="group-title">🥚 鸡蛋素菜</div>${egg}</div>
+            <div class="menu-group"><div class="group-title">🥬 清爽时蔬</div>${veggie}</div>
+            <div class="menu-group"><div class="group-title">🍲 炖菜烩菜</div>${stew}</div>
         `;
-    };
+    }
 
-    // ====================== 提交到 TG 机器人 ======================
+    // ====================== 提交到TG ======================
     async function submitOrder() {
         const name = document.getElementById("userName").value.trim();
+        const meal = document.querySelector('input[name="meal"]:checked').value;
         const checks = document.querySelectorAll('input[type="checkbox"]:checked');
+        const date = document.getElementById("todayDate").innerText;
+        const week = document.getElementById("todayWeek").innerText;
+        const weather = document.getElementById("weather").innerText;
 
         if (!name) { alert("请输入称呼哦～"); return; }
         if (checks.length === 0) { alert("请选择菜品～"); return; }
 
+        // 组装点餐内容
         let dishes = [];
         checks.forEach(i => dishes.push(i.value));
-        const text = `🍽️ *家庭新点餐* \n👤 点餐人：${name}\n🍲 菜品：\n- ${dishes.join("\n- ")}`;
+        const text = `
+🍽️ *家庭新点餐*
+📅 ${date} ${week}
+☁️ 天气：${weather}
+🍳 餐段：${meal}
+👤 点餐人：${name}
+🥗 菜品：\n- ${dishes.join("\n- ")}
+        `.trim();
 
         const url = `https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`;
 
@@ -264,14 +375,10 @@
             await fetch(url, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    chat_id: TG_CHAT_ID,
-                    text: text,
-                    parse_mode: "Markdown"
-                })
+                body: JSON.stringify({ chat_id: TG_CHAT_ID, text: text, parse_mode: "Markdown" })
             });
             document.getElementById("successBox").style.display = "block";
-            setTimeout(() => window.location.reload(), 2000);
+            setTimeout(() => location.reload(), 2000);
         } catch (e) {
             alert("提交成功！");
             document.getElementById("successBox").style.display = "block";
