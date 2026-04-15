@@ -3,167 +3,280 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>家庭今日菜单</title>
+    <title>👨‍🍳 家庭智能点餐</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
         }
+
         body {
-            background: #f7f8fa;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            min-height: 100vh;
             padding: 20px;
             max-width: 600px;
             margin: 0 auto;
         }
-        .card {
-            background: #fff;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+
+        .container {
+            animation: fadeIn 0.6s ease;
         }
-        .title {
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 30px 24px;
             text-align: center;
-            color: #ff3b30;
-            font-size: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .title {
+            font-size: 28px;
+            color: #ff4477;
+            font-weight: bold;
             margin-bottom: 8px;
         }
-        .sub-title {
-            text-align: center;
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 24px;
+
+        .subtitle {
+            color: #888;
+            font-size: 15px;
         }
+
+        .input-box {
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .name-input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid #f0f0f0;
+            border-radius: 12px;
+            font-size: 16px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .name-input:focus {
+            border-color: #ff4477;
+            box-shadow: 0 0 0 3px rgba(255, 68, 119, 0.1);
+        }
+
+        .menu-group {
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .group-title {
+            font-size: 18px;
+            color: #ff5722;
+            margin-bottom: 15px;
+            padding-left: 8px;
+            border-left: 4px solid #ff5722;
+        }
+
         .dish-item {
             display: flex;
             align-items: center;
-            padding: 14px 12px;
-            border-bottom: 1px solid #f2f2f7;
+            padding: 12px 10px;
+            border-radius: 10px;
+            transition: 0.2s;
+            margin-bottom: 6px;
         }
+
+        .dish-item:hover {
+            background: #fff5f7;
+        }
+
         .dish-item input {
-            width: 20px;
-            height: 20px;
-            margin-right: 12px;
+            width: 22px;
+            height: 22px;
+            margin-right: 14px;
+            accent-color: #ff4477;
         }
+
         .dish-name {
             font-size: 16px;
             color: #333;
+            flex: 1;
         }
-        .name-input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #e5e5ea;
-            border-radius: 10px;
-            margin: 20px 0;
-            font-size: 16px;
-            outline: none;
-        }
+
         .submit-btn {
             width: 100%;
-            padding: 16px;
-            background: #ff3b30;
+            padding: 18px;
+            background: linear-gradient(90deg, #ff4477, #ff6b6b);
             color: #fff;
             border: none;
-            border-radius: 12px;
-            font-size: 17px;
-            font-weight: 600;
-            margin-top: 12px;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            box-shadow: 0 6px 20px rgba(255, 68, 119, 0.3);
+            cursor: pointer;
+            transition: 0.3s;
         }
-        .success {
+
+        .submit-btn:active {
+            transform: scale(0.97);
+        }
+
+        .success-box {
+            background: #e8f5e9;
+            color: #2e7d32;
             text-align: center;
-            color: #34c759;
             padding: 20px;
+            border-radius: 16px;
             display: none;
+            animation: pop 0.4s ease;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .footer {
+            text-align: center;
+            color: #fff;
+            font-size: 13px;
+            margin-top: 20px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1 class="title">👨‍🍳 今日家庭菜单</h1>
-        <p class="sub-title" id="tip">请勾选菜品，提交后大厨会收到通知</p>
 
-        <!-- 点餐人姓名 -->
-        <input type="text" class="name-input" id="userName" placeholder="请输入你的称呼（如：爸爸/宝宝）">
-
-        <!-- 菜品列表 -->
-        <div id="dishContainer"></div>
-
-        <!-- 提交按钮 -->
-        <button class="submit-btn" onclick="submitOrder()">提交点餐</button>
-
-        <!-- 提交成功 -->
-        <div class="success" id="success">✅ 点餐成功！大厨已收到</div>
+<div class="container">
+    <div class="header-card">
+        <h1 class="title">👨‍🍳 家庭智能点餐</h1>
+        <p class="subtitle">勾选想吃的菜 · 一键提交 · 大厨秒收到</p>
     </div>
 
-    <script>
-        // ====================== 【你只需要改这里！】今日食材 ======================
-        const todayIngredients = ["猪肉", "土豆", "青椒", "娃娃菜", "鸡蛋", "杏鲍菇", "豆芽", "粉条"];
+    <div class="input-box">
+        <input type="text" class="name-input" id="userName" placeholder="👤 请输入你的称呼（如：爸爸/宝宝）">
+    </div>
 
-        // 菜品库（食材→菜品）
-        const dishLib = [
-            { name: "青椒炒肉", need: ["猪肉", "青椒"] },
-            { name: "土豆炒肉丝", need: ["猪肉", "土豆"] },
-            { name: "杏鲍菇炒肉", need: ["猪肉", "杏鲍菇"] },
-            { name: "豆芽炒肉丝", need: ["猪肉", "豆芽"] },
-            { name: "猪肉炖粉条", need: ["猪肉", "粉条"] },
-            { name: "土豆猪肉炖粉条", need: ["猪肉", "土豆", "粉条"] },
-            { name: "青椒炒蛋", need: ["青椒", "鸡蛋"] },
-            { name: "杏鲍菇炒鸡蛋", need: ["杏鲍菇", "鸡蛋"] },
-            { name: "豆芽炒蛋", need: ["豆芽", "鸡蛋"] },
-            { name: "青椒土豆丝", need: ["土豆", "青椒"] },
-            { name: "酸辣土豆丝", need: ["土豆"] },
-            { name: "清炒娃娃菜", need: ["娃娃菜"] },
-            { name: "娃娃菜炖粉条", need: ["娃娃菜", "粉条"] },
-            { name: "清炒豆芽", need: ["豆芽"] },
-            { name: "酸辣豆芽", need: ["豆芽"] }
-        ];
+    <!-- 菜品容器 -->
+    <div id="dishContainer"></div>
 
-        // 自动生成今日菜单
-        window.onload = function () {
-            let html = '';
-            dishLib.forEach(dish => {
-                // 判断食材是否足够
-                const canMake = dish.need.every(i => todayIngredients.includes(i));
-                if (canMake) {
-                    html += `
-                    <label class="dish-item">
-                        <input type="checkbox" value="${dish.name}">
-                        <span class="dish-name">${dish.name}</span>
-                    </label>`;
-                }
+    <button class="submit-btn" onclick="submitOrder()">✅ 确认提交点餐</button>
+
+    <div class="success-box" id="successBox">
+        🎉 点餐提交成功！大厨已收到通知～
+    </div>
+
+    <div class="footer">💖 家庭专属点餐系统</div>
+</div>
+
+<script>
+    // ====================== 【你只需要改这里！】今日食材 ======================
+    const todayIngredients = ["猪肉", "土豆", "青椒", "娃娃菜", "鸡蛋", "杏鲍菇", "豆芽", "粉条"];
+
+    // ====================== 【TG 通知配置】填写你的机器人信息 ======================
+    const TG_BOT_TOKEN = "8790494476:AAHFGW_XK682pA_RIAlTadyPZE1CtRE_zH4";
+    const TG_CHAT_ID = "5807210055";
+
+    // 菜品库
+    const dishLib = [
+        { name: "青椒炒肉", need: ["猪肉", "青椒"], type: "meat" },
+        { name: "土豆炒肉丝", need: ["猪肉", "土豆"], type: "meat" },
+        { name: "杏鲍菇炒肉", need: ["猪肉", "杏鲍菇"], type: "meat" },
+        { name: "豆芽炒肉丝", need: ["猪肉", "豆芽"], type: "meat" },
+        { name: "猪肉炖粉条", need: ["猪肉", "粉条"], type: "stew" },
+        { name: "土豆猪肉炖粉条", need: ["猪肉", "土豆", "粉条"], type: "stew" },
+        { name: "青椒炒蛋", need: ["青椒", "鸡蛋"], type: "egg" },
+        { name: "杏鲍菇炒鸡蛋", need: ["杏鲍菇", "鸡蛋"], type: "egg" },
+        { name: "豆芽炒蛋", need: ["豆芽", "鸡蛋"], type: "egg" },
+        { name: "青椒土豆丝", need: ["土豆", "青椒"], type: "veggie" },
+        { name: "酸辣土豆丝", need: ["土豆"], type: "veggie" },
+        { name: "清炒娃娃菜", need: ["娃娃菜"], type: "veggie" },
+        { name: "娃娃菜炖粉条", need: ["娃娃菜", "粉条"], type: "stew" },
+        { name: "清炒豆芽", need: ["豆芽"], type: "veggie" },
+        { name: "酸辣豆芽", need: ["豆芽"], type: "veggie" }
+    ];
+
+    // 分类渲染菜单
+    window.onload = function () {
+        const container = document.getElementById("dishContainer");
+        let meat = "", egg = "", veggie = "", stew = "";
+
+        dishLib.forEach(dish => {
+            const canMake = dish.need.every(i => todayIngredients.includes(i));
+            if (!canMake) return;
+
+            const item = `
+            <label class="dish-item">
+                <input type="checkbox" value="${dish.name}">
+                <span class="dish-name">${dish.name}</span>
+            </label>`;
+
+            if (dish.type === "meat") meat += item;
+            else if (dish.type === "egg") egg += item;
+            else if (dish.type === "veggie") veggie += item;
+            else if (dish.type === "stew") stew += item;
+        });
+
+        container.innerHTML = `
+            <div class="menu-group">
+                <div class="group-title">🥩 荤菜系列</div>${meat}
+            </div>
+            <div class="menu-group">
+                <div class="group-title">🥚 鸡蛋素菜</div>${egg}
+            </div>
+            <div class="menu-group">
+                <div class="group-title">🥬 清爽时蔬</div>${veggie}
+            </div>
+            <div class="menu-group">
+                <div class="group-title">🍲 炖菜烩菜</div>${stew}
+            </div>
+        `;
+    };
+
+    // ====================== 提交到 TG 机器人 ======================
+    async function submitOrder() {
+        const name = document.getElementById("userName").value.trim();
+        const checks = document.querySelectorAll('input[type="checkbox"]:checked');
+
+        if (!name) { alert("请输入称呼哦～"); return; }
+        if (checks.length === 0) { alert("请选择菜品～"); return; }
+
+        let dishes = [];
+        checks.forEach(i => dishes.push(i.value));
+        const text = `🍽️ *家庭新点餐* \n👤 点餐人：${name}\n🍲 菜品：\n- ${dishes.join("\n- ")}`;
+
+        const url = `https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`;
+
+        try {
+            await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    chat_id: TG_CHAT_ID,
+                    text: text,
+                    parse_mode: "Markdown"
+                })
             });
-            document.getElementById("dishContainer").innerHTML = html;
-        };
-
-        // ====================== 提交点餐（发送到你微信） ======================
-        async function submitOrder() {
-            const name = document.getElementById("userName").value.trim();
-            const checks = document.querySelectorAll('input:checked');
-            
-            if (!name) { alert("请输入称呼"); return; }
-            if (checks.length === 0) { alert("请选择菜品"); return; }
-
-            // 组装点餐内容
-            let dishes = [];
-            checks.forEach(i => dishes.push(i.value));
-            const content = `🍽️ 家庭点餐通知\n\n点餐人：${name}\n菜品：\n- ${dishes.join("\n- ")}`;
-
-            // ========== 这里替换成你的企业微信机器人Webhook ==========
-            const webhookUrl = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=这里填你的key";
-
-            try {
-                await fetch(webhookUrl, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ msgtype: "text", text: { content } })
-                });
-                document.getElementById("success").style.display = "block";
-            } catch (e) {
-                alert("提交成功！");
-                document.getElementById("success").style.display = "block";
-            }
+            document.getElementById("successBox").style.display = "block";
+            setTimeout(() => window.location.reload(), 2000);
+        } catch (e) {
+            alert("提交成功！");
+            document.getElementById("successBox").style.display = "block";
         }
-    </script>
+    }
+</script>
 </body>
 </html>
