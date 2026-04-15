@@ -340,13 +340,13 @@
         event.target.classList.add("active");
     }
 
-    // 份数增减
+    // 份数增减（最小值改为0）
     function changeNum(name, num) {
-        dishNums[name] = Math.max(1, Math.min(3, (dishNums[name]||1)+num));
+        dishNums[name] = Math.max(0, Math.min(3, (dishNums[name]||0)+num));
         document.querySelector(`[data-dish="${name}"] .num`).innerText = dishNums[name];
     }
 
-    // 渲染菜品
+    // 渲染菜品（默认份数0）
     function renderDishes() {
         const ctn = document.getElementById("dishContainer");
         let meat="", egg="", veggie="", stew="";
@@ -355,7 +355,7 @@
         dishLib.forEach(d=>{
             if(!d.need.every(i=>todayIngredients.includes(i))) return;
             const out = soldOutDishes.includes(d.name);
-            dishNums[d.name] = 1;
+            dishNums[d.name] = 0; // 默认0份
             const item = `
             <div class="dish-item ${out?'disabled':''}" data-dish="${d.name}">
                 <span class="dish-name">
@@ -363,7 +363,7 @@
                 </span>
                 <div class="num-box">
                     <button class="num-btn" onclick="changeNum('${d.name}',-1)">-</button>
-                    <span class="num">0</span>
+                    <span class="num">0</span> <!-- 初始显示0 -->
                     <button class="num-btn" onclick="changeNum('${d.name}',1)">+</button>
                 </div>
             </div>`;
@@ -393,7 +393,10 @@
         const weather = document.getElementById("weather").innerText;
 
         if(!name) return alert("请输入称呼");
-        if(Object.keys(dishNums).length===0) return alert("请选择菜品");
+        
+        // 只筛选份数>0的菜品
+        const validDishes = Object.entries(dishNums).filter(([k,v])=>v>0);
+        if(validDishes.length===0) return alert("请选择至少一份菜品");
 
         // 震动+音效
         if(navigator.vibrate) navigator.vibrate(100);
@@ -401,7 +404,7 @@
 
         // 组装菜品
         let dishStr = "";
-        Object.entries(dishNums).forEach(([k,v])=>dishStr+=`- ${k} ×${v}份\n`);
+        validDishes.forEach(([k,v])=>dishStr+=`- ${k} ×${v}份\n`);
 
         const text = `
 🍽️ *家庭新点餐*
